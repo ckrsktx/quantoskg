@@ -124,11 +124,6 @@
             margin-top: 20px;
             background: #ffffff;
         }
-        .grid-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
         @media (max-width: 600px) {
             body { padding: 10px; }
             .status-badge { float: none; display: flex; margin-top: 10px; margin-bottom: 10px; width: fit-content; }
@@ -271,10 +266,10 @@
             },
             "Personalizado": {
                 name: "Tecido Personalizado",
-                width: "",
-                yield: "",
-                seam: "",
-                margin: "",
+                width: 160.0,
+                yield: 3.00,
+                seam: 5.0,
+                margin: 10.0,
                 ref: "-",
                 ribana_pct: null,
                 ribana_name: ""
@@ -313,10 +308,10 @@
                 yInput.disabled = false;
                 sInput.disabled = false;
                 mInput.disabled = false;
-                wInput.value = "";
-                yInput.value = "";
-                sInput.value = "";
-                mInput.value = "";
+                wInput.value = 160;
+                yInput.value = 3.00;
+                sInput.value = 5.0;
+                mInput.value = 10.0;
             } else {
                 customDiv.style.display = "none";
                 wInput.disabled = true;
@@ -351,8 +346,11 @@
 
             const width = parseFloat(document.getElementById("fabric_width").value);
             const yieldVal = parseFloat(document.getElementById("fabric_yield").value);
-            const seam = parseFloat(document.getElementById("seam_allowance").value);
-            const margin = parseFloat(document.getElementById("safety_margin").value);
+            let seam = parseFloat(document.getElementById("seam_allowance").value);
+            let margin = parseFloat(document.getElementById("safety_margin").value);
+
+            if (isNaN(seam)) seam = 0;
+            if (isNaN(margin)) margin = 0;
 
             let fabricName = p.name;
             if (presetKey === "Personalizado") {
@@ -360,7 +358,7 @@
             }
 
             if (!width || !yieldVal || isNaN(width) || isNaN(yieldVal) || width <= 0 || yieldVal <= 0) {
-                document.getElementById("result_output").innerHTML = "<div style='color: #000; font-weight: bold; text-align: center;'>Aguardando preenchimento das Propriedades Técnicas válidas para calcular.</div>";
+                document.getElementById("result_output").innerHTML = "<div style='color: #000; font-weight: bold; text-align: center; border: 2px solid #000; padding: 15px; background: #fff;'>Aguardando preenchimento da Largura e Rendimento válidos para calcular.</div>";
                 return;
             }
 
@@ -488,5 +486,6 @@
             calculate();
         };
     </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
