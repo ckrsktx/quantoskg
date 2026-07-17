@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUANTOS KG?</title>
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --border-color: #000000;
+            --hover-color: #f2f2f2;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 16px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            box-sizing: border-box;
+        }
+        h1, h2, h3, h4, p, label, span {
+            color: var(--text-color);
+        }
+        h1 {
+            font-size: 22px;
+            margin-bottom: 4px;
+        }
+        .status-badge {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            float: right;
+            margin-top: -35px;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .column {
+            flex: 1;
+            min-width: 280px;
+        }
+        fieldset, .card {
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 14px;
+            margin-bottom: 16px;
+            background: #ffffff;
+        }
+        label {
+            display: block;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            margin-top: 10px;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 13px;
+            background: #ffffff;
+            color: #000000;
+            margin-bottom: 8px;
+        }
+        button {
+            background-color: #000000;
+            color: #ffffff;
+            border: 1px solid #000000;
+            padding: 10px 16px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            font-size: 13px;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #222222;
+        }
+        .clear-btn {
+            background-color: #ffffff;
+            color: #000000;
+            border: 2px dashed #000000;
+            margin-bottom: 15px;
+        }
+        .clear-btn:hover {
+            background-color: #f2f2f2;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            margin-top: 10px;
+            background: #ffffff;
+        }
+        th, td {
+            border: 1px solid #000000;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .result-box {
+            border: 2px solid #000000;
+            padding: 16px;
+            border-radius: 4px;
+            margin-top: 20px;
+            background: #ffffff;
+        }
+        .grid-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .status-badge { float: none; display: flex; margin-top: 10px; margin-bottom: 10px; width: fit-content; }
+            th, td { font-size: 10px; padding: 4px; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🧮 QUANTOS KG?</h1>
+    <div id="status-badge" class="status-badge">
+        <span id="status-dot" style="color: #00cc00; font-size: 14px;">●</span> 
+        <b id="status-text">CONECTADO</b> | Presets de fábrica ativos
+    </div>
+    <div style="clear: both;"></div>
+    
+    <p style="font-size: 12px; margin-bottom: 20px;">
+        Selecione o tecido e defina as propriedades para calcular exatamente o consumo em quilogramas (kg) necessários para a sua produção.
+    </p>
+
+    <div class="container">
+        <!-- Left Column: Fabric & Technical Specs -->
+        <div class="column">
+            <div class="card">
+                <h3>📦 Seleção do Tecido</h3>
+                <label for="preset_select">Escolha uma opção de Tecido</label>
+                <select id="preset_select" onchange="onPresetChange()">
+                    <option value="Moletinho">Moletinho Fine Algodão (Aradefe)</option>
+                    <option value="Malhão">Malhão Heavy Algodão (Aradefe)</option>
+                    <option value="Personalizado">Personalizado (Defina manualmente)</option>
+                </select>
+
+                <div id="custom_name_container" style="display: none;">
+                    <label for="custom_name">Nome do Tecido Personalizado</label>
+                    <input type="text" id="custom_name" value="Meia Malha Penteada 30.1" oninput="calculate()">
+                </div>
+
+                <h3 style="margin-top: 20px;">📏 Propriedades Técnicas</h3>
+                <label for="fabric_width">Largura Aberta (cm)</label>
+                <input type="number" id="fabric_width" value="190" step="0.5" disabled oninput="calculate()">
+
+                <label for="fabric_yield">Rendimento (m/kg)</label>
+                <input type="number" id="fabric_yield" value="2.5" step="0.01" disabled oninput="calculate()">
+
+                <label for="seam_allowance">Margem de Costura / Bainha (cm)</label>
+                <input type="number" id="seam_allowance" value="5" step="0.5" disabled oninput="calculate()">
+
+                <label for="safety_margin">Margem de Segurança / Encolhimento (%)</label>
+                <input type="number" id="safety_margin" value="10" step="0.5" disabled oninput="calculate()">
+            </div>
+        </div>
+
+        <!-- Right Column: Size Grade & Inputs -->
+        <div class="column">
+            <div class="card">
+                <h3>👕 Tabela de Medidas (Camiseta Oversized)</h3>
+                <button class="clear-btn" onclick="clearQuantities()">🗑️ Limpar Grade Padrão</button>
+
+                <!-- P & M -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div>
+                        <h4 style="margin: 5px 0;">Tamanho P</h4>
+                        <label>Quantidade</label>
+                        <input type="number" id="p_qty" value="3" min="0" oninput="calculate()">
+                        <label>Altura (cm)</label>
+                        <input type="number" id="p_h" value="73" oninput="calculate()">
+                        <label>Largura (cm)</label>
+                        <input type="number" id="p_w" value="52" oninput="calculate()">
+                        <label>Manga (cm)</label>
+                        <input type="number" id="p_s" value="23" oninput="calculate()">
+                    </div>
+                    <div>
+                        <h4 style="margin: 5px 0;">Tamanho M</h4>
+                        <label>Quantidade</label>
+                        <input type="number" id="m_qty" value="4" min="0" oninput="calculate()">
+                        <label>Altura (cm)</label>
+                        <input type="number" id="m_h" value="76" oninput="calculate()">
+                        <label>Largura (cm)</label>
+                        <input type="number" id="m_w" value="56" oninput="calculate()">
+                        <label>Manga (cm)</label>
+                        <input type="number" id="m_s" value="24" oninput="calculate()">
+                    </div>
+                </div>
+
+                <!-- G & GG -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px;">
+                    <div>
+                        <h4 style="margin: 5px 0;">Tamanho G</h4>
+                        <label>Quantidade</label>
+                        <input type="number" id="g_qty" value="4" min="0" oninput="calculate()">
+                        <label>Altura (cm)</label>
+                        <input type="number" id="g_h" value="80" oninput="calculate()">
+                        <label>Largura (cm)</label>
+                        <input type="number" id="g_w" value="59" oninput="calculate()">
+                        <label>Manga (cm)</label>
+                        <input type="number" id="g_s" value="26" oninput="calculate()">
+                    </div>
+                    <div>
+                        <h4 style="margin: 5px 0;">Tamanho GG</h4>
+                        <label>Quantidade</label>
+                        <input type="number" id="gg_qty" value="3" min="0" oninput="calculate()">
+                        <label>Altura (cm)</label>
+                        <input type="number" id="gg_h" value="82" oninput="calculate()">
+                        <label>Largura (cm)</label>
+                        <input type="number" id="gg_w" value="63" oninput="calculate()">
+                        <label>Manga (cm)</label>
+                        <input type="number" id="gg_s" value="27" oninput="calculate()">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="result_output" class="result-box">
+        <div style="text-align: center; font-weight: bold;">Aguardando cálculo...</div>
+    </div>
+
+    <script>
+        const PRESETS = {
+            "Moletinho": {
+                name: "Moletinho Fine Algodão (Aradefe)",
+                width: 190.0,
+                yield: 2.50,
+                seam: 5.0,
+                margin: 10.0,
+                ref: "105.05ft-pr1001",
+                ribana_pct: 15.0,
+                ribana_name: "Ribana 2X1 Moletinho Fine - Preto"
+            },
+            "Malhão": {
+                name: "Malhão Heavy Algodão (Aradefe)",
+                width: 188.0,
+                yield: 1.97,
+                seam: 5.0,
+                margin: 10.0,
+                ref: "110.62ft-pr1001",
+                ribana_pct: 5.0,
+                ribana_name: "Ribana Heavy 2x1 Algodão - Preto"
+            },
+            "Personalizado": {
+                name: "Tecido Personalizado",
+                width: "",
+                yield: "",
+                seam: "",
+                margin: "",
+                ref: "-",
+                ribana_pct: null,
+                ribana_name: ""
+            }
+        };
+
+        function updateOnlineStatus() {
+            const dot = document.getElementById("status-dot");
+            const text = document.getElementById("status-text");
+            if (navigator.onLine) {
+                dot.style.color = "#00cc00";
+                text.innerHTML = "CONECTADO";
+            } else {
+                dot.style.color = "#cc0000";
+                text.innerHTML = "SERVIDOR OFFLINE | Tecidos Padrões carregados localmente (O cálculo funciona normalmente!)";
+            }
+        }
+
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+        updateOnlineStatus();
+
+        function onPresetChange() {
+            const key = document.getElementById("preset_select").value;
+            const p = PRESETS[key];
+            const customDiv = document.getElementById("custom_name_container");
+            
+            const wInput = document.getElementById("fabric_width");
+            const yInput = document.getElementById("fabric_yield");
+            const sInput = document.getElementById("seam_allowance");
+            const mInput = document.getElementById("safety_margin");
+
+            if (key === "Personalizado") {
+                customDiv.style.display = "block";
+                wInput.disabled = false;
+                yInput.disabled = false;
+                sInput.disabled = false;
+                mInput.disabled = false;
+                wInput.value = "";
+                yInput.value = "";
+                sInput.value = "";
+                mInput.value = "";
+            } else {
+                customDiv.style.display = "none";
+                wInput.disabled = true;
+                yInput.disabled = true;
+                sInput.disabled = true;
+                mInput.disabled = true;
+                wInput.value = p.width;
+                yInput.value = p.yield;
+                sInput.value = p.seam;
+                mInput.value = p.margin;
+
+                // Reset quantities and measurements to default when preset changes
+                document.getElementById("p_qty").value = 3; document.getElementById("p_h").value = 73; document.getElementById("p_w").value = 52; document.getElementById("p_s").value = 23;
+                document.getElementById("m_qty").value = 4; document.getElementById("m_h").value = 76; document.getElementById("m_w").value = 56; document.getElementById("m_s").value = 24;
+                document.getElementById("g_qty").value = 4; document.getElementById("g_h").value = 80; document.getElementById("g_w").value = 59; document.getElementById("g_s").value = 26;
+                document.getElementById("gg_qty").value = 3; document.getElementById("gg_h").value = 82; document.getElementById("gg_w").value = 63; document.getElementById("gg_s").value = 27;
+            }
+            calculate();
+        }
+
+        function clearQuantities() {
+            document.getElementById("p_qty").value = 0;
+            document.getElementById("m_qty").value = 0;
+            document.getElementById("g_qty").value = 0;
+            document.getElementById("gg_qty").value = 0;
+            calculate();
+        }
+
+        function calculate() {
+            const presetKey = document.getElementById("preset_select").value;
+            const p = PRESETS[presetKey];
+
+            const width = parseFloat(document.getElementById("fabric_width").value);
+            const yieldVal = parseFloat(document.getElementById("fabric_yield").value);
+            const seam = parseFloat(document.getElementById("seam_allowance").value);
+            const margin = parseFloat(document.getElementById("safety_margin").value);
+
+            let fabricName = p.name;
+            if (presetKey === "Personalizado") {
+                fabricName = document.getElementById("custom_name").value || "Tecido Personalizado";
+            }
+
+            if (!width || !yieldVal || isNaN(width) || isNaN(yieldVal) || width <= 0 || yieldVal <= 0) {
+                document.getElementById("result_output").innerHTML = "<div style='color: #000; font-weight: bold; text-align: center;'>Aguardando preenchimento das Propriedades Técnicas válidas para calcular.</div>";
+                return;
+            }
+
+            const sizes = [
+                { name: 'P', qty: parseInt(document.getElementById("p_qty").value) || 0, h: parseFloat(document.getElementById("p_h").value) || 0, w: parseFloat(document.getElementById("p_w").value) || 0, s: parseFloat(document.getElementById("p_s").value) || 0 },
+                { name: 'M', qty: parseInt(document.getElementById("m_qty").value) || 0, h: parseFloat(document.getElementById("m_h").value) || 0, w: parseFloat(document.getElementById("m_w").value) || 0, s: parseFloat(document.getElementById("m_s").value) || 0 },
+                { name: 'G', qty: parseInt(document.getElementById("g_qty").value) || 0, h: parseFloat(document.getElementById("g_h").value) || 0, w: parseFloat(document.getElementById("g_w").value) || 0, s: parseFloat(document.getElementById("g_s").value) || 0 },
+                { name: 'GG', qty: parseInt(document.getElementById("gg_qty").value) || 0, h: parseFloat(document.getElementById("gg_h").value) || 0, w: parseFloat(document.getElementById("gg_w").value) || 0, s: parseFloat(document.getElementById("gg_s").value) || 0 }
+            ];
+
+            let activeSizes = [];
+            let totalMeters = 0;
+            let totalPieces = 0;
+            let resultsTable = [];
+
+            for (let sz of sizes) {
+                if (sz.qty <= 0) continue;
+                if (sz.h <= 0 || sz.w <= 0 || sz.s <= 0) {
+                    document.getElementById("result_output").innerHTML = `<div style='color: red; font-weight: bold; text-align: center;'>Preencha as medidas para o tamanho ${sz.name}.</div>`;
+                    return;
+                }
+
+                let alt_cortada = sz.h + seam;
+                let larg_cortada = sz.w + 2;
+                let manga_cortada = sz.s + 4;
+                let body_width_used = 2 * larg_cortada;
+                let sobra_lateral = width - body_width_used;
+                let consumo_unitario = alt_cortada / 100.0;
+                let subtotal = sz.qty * consumo_unitario;
+
+                totalMeters += subtotal;
+                totalPieces += sz.qty;
+                activeSizes.push(sz.name);
+
+                resultsTable.push({
+                    name: sz.name,
+                    qty: sz.qty,
+                    alt: alt_cortada,
+                    larg: larg_cortada,
+                    manga: manga_cortada,
+                    sobra: sobra_lateral,
+                    unit: consumo_unitario,
+                    sub: subtotal
+                });
+            }
+
+            if (totalPieces === 0) {
+                document.getElementById("result_output").innerHTML = "<div style='color: #000; font-weight: bold; text-align: center;'>Adicione pelo menos 1 quantidade para algum tamanho para calcular o consumo.</div>";
+                return;
+            }
+
+            let netKg = totalMeters / yieldVal;
+            let safetyKg = netKg * (1 + (margin / 100.0));
+
+            let recommendedTitle = activeSizes.length === 1 ? `COMPRAR TAMANHO ${activeSizes[0]}` : `COMPRAR (COM ${margin}% MARGEM)`;
+            let detailMsg = activeSizes.length === 1 ? `Consumo exclusivo para o tamanho ${activeSizes[0]}` : `Grade total de ${totalPieces} peças`;
+
+            let ribanaHtml = "";
+            if (p.ribana_pct) {
+                let ribanaKg = safetyKg * (p.ribana_pct / 100.0);
+                ribanaHtml = `
+                <div style="flex: 1; min-width: 140px; padding: 12px; border: 2px dashed #000; background: #fff; border-radius: 4px; text-align: center;">
+                    <p style="margin: 0; font-size: 10px; font-weight: bold; text-transform: uppercase;">⭐ COMPRA DE RIBANA SUGERIDA</p>
+                    <p style="margin: 4px 0 0 0; font-size: 26px; font-weight: bold;">${ribanaKg.toFixed(3)} kg</p>
+                    <p style="margin: 4px 0 0 0; font-size: 11px;">${p.ribana_name} (${p.ribana_pct}%)</p>
+                </div>`;
+            }
+
+            let tableHtml = `
+            <h2 style="border-bottom: 2px solid #000; padding-bottom: 8px; font-size: 15px; text-transform: uppercase;">⚖️ COMPRA DE TECIDO RECOMENDADA</h2>
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+                <div style="flex: 1; min-width: 140px; padding: 12px; border: 2px solid #000; background: #fff; border-radius: 4px; text-align: center;">
+                    <p style="margin: 0; font-size: 10px; font-weight: bold; text-transform: uppercase;">${recommendedTitle}</p>
+                    <p style="margin: 4px 0 0 0; font-size: 30px; font-weight: bold;">${safetyKg.toFixed(3)} kg</p>
+                    <p style="margin: 4px 0 0 0; font-size: 11px;">${detailMsg}</p>
+                </div>
+                <div style="flex: 1; min-width: 140px; padding: 12px; border: 1px solid #000; background: #f9f9f9; border-radius: 4px; text-align: center;">
+                    <p style="margin: 0; font-size: 10px; font-weight: bold; text-transform: uppercase;">PESO LÍQUIDO (SEM PERDAS)</p>
+                    <p style="margin: 4px 0 0 0; font-size: 22px; font-weight: bold;">${netKg.toFixed(3)} kg</p>
+                    <p style="margin: 4px 0 0 0; font-size: 11px;">Total em metros: ${totalMeters.toFixed(2)} m</p>
+                </div>
+                ${ribanaHtml}
+            </div>
+            <div style="border-top: 1px solid #000; padding-top: 12px; font-size: 12px;">
+                <p style="margin: 2px 0;"><b>🧵 Tecido de Base:</b> ${fabricName}</p>
+                <p style="margin: 2px 0;"><b>📦 Parâmetros:</b> Rendimento ${yieldVal.toFixed(2)} m/kg | Largura ${(width/100.0).toFixed(2)}m</p>
+            </div>
+            <br>
+            <h3 style="border-bottom: 2px solid #000; padding-bottom: 6px; font-size: 13px; text-transform: uppercase;">📐 DETALHES TÉCNICOS DE CORTE</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tam.</th>
+                        <th>Qtd.</th>
+                        <th>Compr. Corte (cm)</th>
+                        <th>Larg. Corte (cm)</th>
+                        <th>Manga (cm)</th>
+                        <th>Sobra Lateral (cm)</th>
+                        <th>Cons. Unit. (m)</th>
+                        <th>Subtotal (m)</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+
+            for (let r of resultsTable) {
+                tableHtml += `
+                    <tr>
+                        <td style="font-weight: bold; background: #f9f9f9;">${r.name}</td>
+                        <td>${r.qty}</td>
+                        <td>${r.alt}</td>
+                        <td>${r.larg}</td>
+                        <td>${r.manga}</td>
+                        <td>${r.sobra} (OK)</td>
+                        <td style="font-weight: bold;">${r.unit.toFixed(2)}</td>
+                        <td style="font-weight: bold; background: #f9f9f9;">${r.sub.toFixed(2)}</td>
+                    </tr>`;
+            }
+
+            tableHtml += `</tbody></table>`;
+            document.getElementById("result_output").innerHTML = tableHtml;
+        }
+
+        // Run calculation on load
+        window.onload = function() {
+            calculate();
+        };
+    </script>
+</body>
+</html>
